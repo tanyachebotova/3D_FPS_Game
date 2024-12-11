@@ -1,46 +1,74 @@
-using UnityEngine;
+
 using System.Collections.Generic;
-using System.Linq;
+using UnityEngine;
 
 public class MazeManager : MonoBehaviour
 {
-    public GameObject[] mazeBlockPrefabs;
-    public GameObject player;
-    public Transform currentEntrance;
-    public List<GameObject> generatedBlocks = new List<GameObject>();
-    private System.Random random = new System.Random();
+    public int width = 10;
+    public int depth = 10;
+    public GameObject[] mazePrefabs; // Массив префабов лабиринтов
+    public Transform player;
+    private int currentMazeIndex = 0;
+    public int lastMaze = 4;
+
+
+    private List<GameObject> currentMazeBlocks = new List<GameObject>();
+
+    public void GenerateMaze()
+    {
+
+        if (currentMazeIndex > lastMaze)
+        {
+            Debug.Log("Игра закончена. Победил блять!");
+
+            return;
+
+        }
+
+
+        // Удаляем старый лабиринт
+        foreach (GameObject block in currentMazeBlocks)
+        {
+            Destroy(block);
+        }
+        currentMazeBlocks.Clear();
+
+
+
+
+        if (currentMazeIndex >= mazePrefabs.Length)
+        {
+            Debug.Log("Лабиринт кончился. Ебать ты мудак.");
+            return;
+        }
+
+
+        GameObject mazePrefab = mazePrefabs[currentMazeIndex];
+
+
+
+        // Генерируем новый лабиринт
+        for (int x = 0; x < width; x++)
+        {
+            for (int z = 0; z < depth; z++)
+            {
+                Vector3 position = new Vector3(x * mazePrefab.transform.lossyScale.x, 0, z * mazePrefab.transform.lossyScale.z);
+                Instantiate(mazePrefab, position, Quaternion.identity, transform).transform.parent = transform; ;
+            }
+        }
+
+
+        // Перемещаем игрока в начало лабиринта
+        player.position = new Vector3(mazePrefab.transform.lossyScale.x / 2f, player.position.y, mazePrefab.transform.lossyScale.z / 2f);
+
+        currentMazeIndex++;
+    }
+
+
 
     void Start()
     {
-        if (mazeBlockPrefabs == null || mazeBlockPrefabs.Length == 0 || player == null)
-        {
-            Debug.LogError("MazeManager: Missing Prefabs or Player!");
-            return;
-        }
-        GenerateNextBlock();
+
+        GenerateMaze();
     }
-
-    void GenerateNextBlock()
-    {
-        int nextLevelIndex = generatedBlocks.Count % mazeBlockPrefabs.Length;
-        GameObject newBlock = Instantiate(mazeBlockPrefabs[nextLevelIndex], currentEntrance.position, Quaternion.identity);
-        generatedBlocks.Add(newBlock);
-
-        Transform newEntrance = newBlock.transform.Find("Entrance");
-        Transform newExit = newBlock.transform.Find("Exit");
-
-        if (newEntrance == null || newExit == null)
-        {
-            Debug.LogError("MazeBlock prefab is missing 'Entrance' or 'Exit' objects!");
-            return;
-        }
-
-        Vector3 rotation = new Vector3(0, random.Next(0, 4) * 90, 0);
-        newBlock.transform.Rotate(rotation);
-
-        currentEntrance = newExit;
-        player.transform.position = newEntrance.position;
-    }
-
-    public void OnPlayerExitBlock() { GenerateNextBlock(); }
 }
