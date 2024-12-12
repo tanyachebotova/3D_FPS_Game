@@ -653,15 +653,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e60eeab554d4c314d820be4cb5a78711, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 20
-  depth: 20
   mazePrefabs:
   - {fileID: 1992682048}
   - {fileID: 1914595441}
   - {fileID: 538611713}
   - {fileID: 737003729}
   player: {fileID: 644037486}
-  lastMaze: 4
+  currentMazeIndex: 0
 --- !u!4 &1498858548
 Transform:
   m_ObjectHideFlags: 0
@@ -759,6 +757,14 @@ PrefabInstance:
     - target: {fileID: 4755187586673407684, guid: 454ccc31b38fec14c9909f2f78a0701c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6843849034582866168, guid: 454ccc31b38fec14c9909f2f78a0701c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 18.809
+      objectReference: {fileID: 0}
+    - target: {fileID: 6843849034582866168, guid: 454ccc31b38fec14c9909f2f78a0701c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -9.256
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1275,7 +1281,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 2, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &3598855788274845841
 PrefabInstance:

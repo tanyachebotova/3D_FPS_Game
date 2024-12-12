@@ -1,74 +1,73 @@
-
 using System.Collections.Generic;
 using UnityEngine;
 
 public class MazeManager : MonoBehaviour
 {
-    public int width = 10;
-    public int depth = 10;
-    public GameObject[] mazePrefabs; // Массив префабов лабиринтов
+    public GameObject[] mazePrefabs; // Массив префабов блоков
     public Transform player;
-    private int currentMazeIndex = 0;
-    public int lastMaze = 4;
+    public int currentMazeIndex = 0;
+    private List<GameObject> generatedMazeBlocks = new List<GameObject>();
+    private GameObject currentMazeBlock;
 
-
-    private List<GameObject> currentMazeBlocks = new List<GameObject>();
-
-    public void GenerateMaze()
+    public void GenerateNextMazeBlock()
     {
 
-        if (currentMazeIndex > lastMaze)
-        {
-            Debug.Log("Игра закончена. Победил блять!");
-
-            return;
-
-        }
-
-
-        // Удаляем старый лабиринт
-        foreach (GameObject block in currentMazeBlocks)
-        {
-            Destroy(block);
-        }
-        currentMazeBlocks.Clear();
-
-
-
-
+        currentMazeIndex++;
         if (currentMazeIndex >= mazePrefabs.Length)
         {
-            Debug.Log("Лабиринт кончился. Ебать ты мудак.");
-            return;
+            currentMazeIndex = mazePrefabs.Length -1; // Зацикливаем на последнем типе блока, если их больше нет
+            Debug.Log("Типы блоков закончились, блять! Дальше будут повторяться.");
+
+
         }
 
 
-        GameObject mazePrefab = mazePrefabs[currentMazeIndex];
+        // Создаем новый блок
+        GameObject newMazeBlock = Instantiate(mazePrefabs[currentMazeIndex], transform);
 
-
-
-        // Генерируем новый лабиринт
-        for (int x = 0; x < width; x++)
+        // Позиционируем новый блок рядом с текущим
+        if (currentMazeBlock != null)
         {
-            for (int z = 0; z < depth; z++)
-            {
-                Vector3 position = new Vector3(x * mazePrefab.transform.lossyScale.x, 0, z * mazePrefab.transform.lossyScale.z);
-                Instantiate(mazePrefab, position, Quaternion.identity, transform).transform.parent = transform; ;
-            }
+            Transform currentExit = currentMazeBlock.transform.Find("Exit");
+            Transform newEntrance = newMazeBlock.transform.Find("Entrance");
+
+            //Debug.Log($"currentExit {currentExit}, newEntrance {newEntrance}");
+
+
+
+            newMazeBlock.transform.position = currentExit.position - newEntrance.localPosition; // бесшовный переход
+            //Debug.Log($"newMazeBlock.transform.position{newMazeBlock.transform.position}");
+
+            // Уничтожаем вход нового блока (опционально)
+            Destroy(newEntrance.gameObject);
+
+
+        }
+        else
+        {
+            Transform newEntrance = newMazeBlock.transform.Find("Entrance");
+            player.transform.position = newEntrance.position;
         }
 
 
-        // Перемещаем игрока в начало лабиринта
-        player.position = new Vector3(mazePrefab.transform.lossyScale.x / 2f, player.position.y, mazePrefab.transform.lossyScale.z / 2f);
+        // Сохраняем новый блок как текущий
+        currentMazeBlock = newMazeBlock;
+        generatedMazeBlocks.Add(newMazeBlock);
 
-        currentMazeIndex++;
+
+
+
     }
-
-
 
     void Start()
     {
 
-        GenerateMaze();
+        GenerateNextMazeBlock();
+
+
+
+
     }
+
+
 }
