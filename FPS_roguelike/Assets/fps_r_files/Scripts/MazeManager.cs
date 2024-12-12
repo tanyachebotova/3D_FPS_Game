@@ -1,72 +1,59 @@
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class MazeManager : MonoBehaviour
 {
-    public GameObject[] mazePrefabs; // Массив префабов блоков
+    public GameObject[] mazePrefabs;
     public Transform player;
-    public int currentMazeIndex = 0;
+
     private List<GameObject> generatedMazeBlocks = new List<GameObject>();
     private GameObject currentMazeBlock;
+    private int currentMazeIndex = 0;
+
 
     public void GenerateNextMazeBlock()
     {
-        //Проверка на завершение генерации (добавляем условие)
         if (currentMazeIndex >= mazePrefabs.Length)
         {
-            Debug.Log("Все типы блоков закончились. Игра окончена.");
-            return; // Выходим из функции, если больше блоков нет
+            Debug.LogError("Больше нет префабов лабиринта!");
+            return;
         }
 
-
-        currentMazeIndex++;
         GameObject newMazeBlock = Instantiate(mazePrefabs[currentMazeIndex], transform);
 
-        // Позиционирование относительно последнего выхода
+        Transform newEntrance = newMazeBlock.transform.Find("Entrance");
+        if (newEntrance == null)
+        {
+            Debug.LogError("В префабе не найден объект 'Entrance'");
+            Destroy(newMazeBlock);
+            return;
+        }
+
+
         if (currentMazeBlock != null)
         {
-            Transform lastExit = currentMazeBlock.transform.Find("Exit"); // Находим выход предыдущего блока
-
+            Transform lastExit = currentMazeBlock.transform.Find("Exit");
             if (lastExit == null)
             {
-                Debug.LogError($"Не найден выход в блоке {currentMazeIndex}. Проверьте, правильно ли назван объект с Exit в префабе.");
-                return; // Если выхода нет, не продолжаем
-            }
-
-            Transform newEntrance = newMazeBlock.transform.Find("Entrance");
-
-            if (newEntrance == null)
-            {
-                Debug.LogError($"Не найден вход в блоке {currentMazeIndex}. Проверьте, правильно ли назван объект с Entrance в префабе.");
-                Destroy(newMazeBlock);
-                return; // Если входа нет, уничтожаем блок и не продолжаем
-            }
-
-
-            newMazeBlock.transform.position = lastExit.position;
-
-            // Корректировка смещения, чтобы вход нового блока был в правильном месте
-            newMazeBlock.transform.position += newEntrance.localPosition;
-        }
-        else
-        {
-            // Если это первый блок, позиционируем относительно входа
-            Transform newEntrance = newMazeBlock.transform.Find("Entrance");
-            if (newEntrance == null)
-            {
-                Debug.LogError($"Не найден вход в блоке 0. Проверьте, правильно ли назван объект с Entrance в префабе.");
+                Debug.LogError("В префабе не найден объект 'Exit'");
                 Destroy(newMazeBlock);
                 return;
             }
-            newMazeBlock.transform.position = newEntrance.position;
+
+            // Позиционируем новый блок так, чтобы его вход совпадал с выходом предыдущего
+            newMazeBlock.transform.position = lastExit.position - newEntrance.localPosition;
+
+        }
+        else
+        {
+            // Позиционируем игрока на вход первого блока
             player.position = newEntrance.position;
         }
 
 
-        //Сохраняем текущий блок
         currentMazeBlock = newMazeBlock;
         generatedMazeBlocks.Add(newMazeBlock);
-
+        currentMazeIndex++;
     }
 
     void Start()
