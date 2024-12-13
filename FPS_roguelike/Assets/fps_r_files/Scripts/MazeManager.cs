@@ -5,21 +5,26 @@ public class MazeManager : MonoBehaviour
 {
     public GameObject[] mazePrefabs;
     public Transform player;
-    public float mazeBlockLength = 10f; 
+    public float mazeBlockLength = 10f; // Не используется, но может пригодиться
 
     private List<GameObject> generatedMazeBlocks = new List<GameObject>();
     private GameObject currentMazeBlock;
-    private int currentMazeIndex = 0;
+    private int currentDifficulty = 0;
 
     public void GenerateNextMazeBlock()
     {
-        if (currentMazeIndex >= mazePrefabs.Length)
+        int nextBlockIndex;
+
+        if (currentDifficulty < mazePrefabs.Length)
         {
-            Debug.LogError("Больше нет префабов лабиринта!");
-            return;
+            nextBlockIndex = currentDifficulty;
+        }
+        else
+        {
+            nextBlockIndex = Random.Range(0, mazePrefabs.Length);
         }
 
-        GameObject newMazeBlock = Instantiate(mazePrefabs[currentMazeIndex % mazePrefabs.Length], transform);
+        GameObject newMazeBlock = Instantiate(mazePrefabs[nextBlockIndex], transform);
 
         Transform newEntrance = newMazeBlock.transform.Find("Entrance");
         if (newEntrance == null)
@@ -39,31 +44,31 @@ public class MazeManager : MonoBehaviour
                 return;
             }
 
-            newMazeBlock.transform.position = lastExit.position - newEntrance.localPosition; 
+            newMazeBlock.transform.position = lastExit.position - newEntrance.localPosition;
+            
 
-            currentMazeBlock.SetActive(false); // Деактивируем старый блок
+            //Destroy(currentMazeBlock, 0.5f);
             IncreaseDifficulty();
         }
-        else
-        {
-            // Первый блок лабиринта. Позиционируем игрока у входа.
-            player.position = newEntrance.position;
-        }
+        
 
         currentMazeBlock = newMazeBlock;
         generatedMazeBlocks.Add(newMazeBlock);
-        currentMazeIndex++;
+
     }
 
+    
 
     private void IncreaseDifficulty()
     {
-        Debug.Log("Уровень сложности: " + currentMazeIndex);
-       
+        currentDifficulty++;
+        Debug.Log("Уровень сложности: " + currentDifficulty);
     }
 
     void Start()
     {
         GenerateNextMazeBlock();
+        currentDifficulty++;
     }
 }
+
