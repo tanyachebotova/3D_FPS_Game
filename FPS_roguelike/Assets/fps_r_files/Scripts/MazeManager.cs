@@ -47,7 +47,7 @@ public class MazeManager : MonoBehaviour
             newMazeBlock.transform.position = lastExit.position - newEntrance.localPosition;
             
 
-            //Destroy(currentMazeBlock, 0.5f);
+            Destroy(currentMazeBlock, 0.5f);
             IncreaseDifficulty();
         }
         
