@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyChase : MonoBehaviour
+public class EnemyMove : MonoBehaviour
 {
     public NavMeshAgent agent;  // Ссылка на NavMeshAgent
     public Transform player;    // Ссылка на игрока
@@ -9,27 +9,6 @@ public class EnemyChase : MonoBehaviour
 
     void Start()
     {
-        // Если агент не назначен через Inspector, ищем компонент на этом объекте
-        if (agent == null)
-        {
-            agent = GetComponent<NavMeshAgent>();
-        }
-
-        // Если игрок не назначен вручную, ищем его по тегу "Player"
-        if (player == null)
-        {
-            GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-            if (playerObject != null)
-            {
-                player = playerObject.transform;
-            }
-            else
-            {
-                Debug.LogError("Игрок с тегом 'Player' не найден на сцене!");
-            }
-        }
-
-        // Устанавливаем начальную скорость врага через NavMeshAgent
         agent.speed = moveSpeed;
     }
 
