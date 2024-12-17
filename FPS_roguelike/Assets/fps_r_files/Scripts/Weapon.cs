@@ -34,6 +34,8 @@ public class Weapon : MonoBehaviour
         {
             Transform BulletInstance = Instantiate(bullet, GameObject.Find("Spawn").transform.position, Quaternion.identity);
             BulletInstance.GetComponent<Rigidbody>().AddForce(transform.forward * BulletForce);
+
+
             Magaz = Magaz - 1;
             GetComponent<AudioSource>().PlayOneShot(Fire);
 
