@@ -38,7 +38,7 @@ public class EnemyChase : MonoBehaviour
         if (player != null && agent != null)
         {
             // Устанавливаем позицию игрока как цель для NavMeshAgent
-            agent.SetDestination(player.position);ц
+            agent.SetDestination(player.position);
         }
     }
 }
