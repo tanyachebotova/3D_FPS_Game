@@ -21,7 +21,7 @@ public class MazeManager : MonoBehaviour
         }
         else
         {
-            nextBlockIndex = Random.Range(0, mazePrefabs.Length);
+            nextBlockIndex = Random.Range(1, mazePrefabs.Length);
         }
 
         GameObject newMazeBlock = Instantiate(mazePrefabs[nextBlockIndex], transform);
