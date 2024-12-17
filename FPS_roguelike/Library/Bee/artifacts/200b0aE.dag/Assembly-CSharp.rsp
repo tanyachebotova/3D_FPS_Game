@@ -361,6 +361,8 @@
 "Assets/fps_r_files/Scripts/Commenteds/CommentedCameraController.cs"
 "Assets/fps_r_files/Scripts/Commenteds/CommentedThirdPersonController.cs"
 "Assets/fps_r_files/Scripts/EnemyMove.cs"
+"Assets/fps_r_files/Scripts/Grenade.cs"
+"Assets/fps_r_files/Scripts/Health.cs"
 "Assets/fps_r_files/Scripts/LevelCompletionTrigger.cs"
 "Assets/fps_r_files/Scripts/MazeManager.cs"
 "Assets/fps_r_files/Scripts/PlayerMove.cs"

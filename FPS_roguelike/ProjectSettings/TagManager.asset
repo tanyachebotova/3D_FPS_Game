@@ -6,11 +6,12 @@ TagManager:
   tags:
   - Entrance
   - Exit
+  - Ground
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Enemies
   - Water
   - UI
   - 

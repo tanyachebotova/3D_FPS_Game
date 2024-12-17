@@ -30,6 +30,7 @@ public class PlayerMove : MonoBehaviour
     public float gravity = 9.8f;
 
     float jumpElapsedTime = 0;
+    public int maxGrenades = 5;
 
     // Player states
     bool isJumping = false;
@@ -45,16 +46,20 @@ public class PlayerMove : MonoBehaviour
 
     Animator animator;
     CharacterController cc;
-
+    public GameObject grenadePrefab;
+    public int grenadesPerBlock = 5;
+    public int grenadesRemaining;
 
     void Start()
     {
         cc = GetComponent<CharacterController>();
+        grenadesRemaining = grenadesPerBlock;
         animator = GetComponent<Animator>();
 
         // Message informing the user that they forgot to add an animator
         if (animator == null)
             Debug.LogWarning("Hey buddy, you don't have the Animator component in your player. Without it, the animations won't work.");
+
     }
 
 
@@ -103,6 +108,10 @@ public class PlayerMove : MonoBehaviour
             isJumping = true;
             // Disable crounching when jumping
             //isCrouching = false; 
+        }
+        if (Input.GetKeyDown(KeyCode.C)) // Пример: нажатие C для броска гранаты
+        {
+            ThrowGrenade();
         }
 
         HeadHittingDetect();
@@ -197,5 +206,29 @@ public class PlayerMove : MonoBehaviour
             isJumping = false;
         }
     }
+    public void ThrowGrenade()
+    {
+        if (grenadesRemaining > 0)
+        {
+            grenadesRemaining--;
+            // Определяем направление броска (например, из позиции игрока по направлению взгляда камеры)
+            Vector3 throwDirection = Camera.main.transform.forward;
+
+            // Создаем экземпляр гранаты
+            GameObject newGrenade = Instantiate(grenadePrefab, transform.position + transform.forward + transform.up, Quaternion.identity);
+
+
+            // Получаем компонент Grenade и вызываем метод ThrowGrenade
+            Grenade grenadeScript = newGrenade.GetComponent<Grenade>();
+            grenadeScript.ThrowGrenade(throwDirection);
+
+            Debug.Log("Grenades remaining: " + grenadesRemaining); // Вывод в консоль
+        }
+        else
+        {
+            Debug.Log("No grenades left!"); // Сообщение, если гранат нет
+        }
+    }
+
 
 }
